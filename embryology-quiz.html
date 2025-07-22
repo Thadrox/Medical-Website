@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embryology Quiz</title>
+    <link rel="icon" href="https://img.icons8.com/ios-filled/50/quiz.png" type="image/png"> <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f8ff;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2e8b57;
+        }
+        .question {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .options button {
+            display: block;
+            width: 80%;
+            padding: 12px;
+            margin: 10px auto;
+            border: 1px solid #add8e6;
+            border-radius: 5px;
+            background-color: #e0f2f7;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .options button:hover {
+            background-color: #cceeff;
+            border-color: #99ccff;
+        }
+        #result {
+            margin-top: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #6a5acd;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #483d8b;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Embryology Quiz</h1>
+        <div class="question">
+            <p>1. What is the process by which the three germ layers are formed?</p>
+            <div class="options">
+                <button onclick="checkAnswer('gastrulation')">A) Gastrulation</button>
+                <button onclick="checkAnswer('cleavage')">B) Cleavage</button>
+                <button onclick="checkAnswer('neurulation')">C) Neurulation</button>
+                <button onclick="checkAnswer('implantation')">D) Implantation</button>
+            </div>
+        </div>
+        <p id="result"></p>
+        <a href="https://yourusername.github.io/my-quiz-hub/index.html" class="back-button">Back to Quiz Hub</a>
+    </div>
+
+    <script>
+        function checkAnswer(selectedAnswer) {
+            const resultElement = document.getElementById('result');
+            if (selectedAnswer === 'gastrulation') {
+                resultElement.textContent = "Correct! Gastrulation is the process.";
+                resultElement.style.color = "green";
+            } else {
+                resultElement.textContent = "Incorrect. Try again!";
+                resultElement.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>

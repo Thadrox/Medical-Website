@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Awesome Quiz Hub</title>
+    <link rel="icon" href="https://img.icons8.com/ios-filled/50/quiz.png" type="image/png"> <style>
+        /* General Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50; /* Dark blue-grey */
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* Main Quiz List Styling */
+        .quiz-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 30px;
+        }
+        .quiz-list li {
+            background: #eef2f5; /* Light blue-grey */
+            margin-bottom: 12px;
+            padding: 18px 25px;
+            border-radius: 8px;
+            cursor: pointer; /* Indicate clickable */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .quiz-list li:hover {
+            background-color: #e0e6eb; /* Slightly darker on hover */
+            transform: translateY(-2px);
+        }
+        .quiz-list li h2 {
+            margin: 0;
+            color: #34495e; /* Darker blue-grey */
+            font-size: 1.6em;
+        }
+        .quiz-list li .arrow {
+            font-size: 1.5em;
+            color: #7f8c8d; /* Grey */
+        }
+
+        /* Category Detail Section Styling */
+        .category-detail {
+            display: none; /* Hidden by default */
+            margin-top: 40px;
+            padding: 30px;
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            background-color: #fcfcfc;
+        }
+        .category-detail.active {
+            display: block; /* Show when active */
+        }
+        .category-detail h2 {
+            color: #2980b9; /* Bright blue */
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 2em;
+        }
+        .category-detail .sub-category {
+            background: #f7f9fb; /* Even lighter blue-grey */
+            border: 1px solid #e0e6eb;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .sub-category h3 {
+            color: #3498db; /* Medium blue */
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        .sub-category p {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .sub-category .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .sub-category .action-buttons a {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-align: center;
+            white-space: nowrap; /* Prevent text wrapping inside buttons */
+        }
+        .sub-category .action-buttons .content-link {
+            background-color: #2ecc71; /* Green */
+            color: white;
+        }
+        .sub-category .action-buttons .content-link:hover {
+            background-color: #27ae60;
+            transform: translateY(-1px);
+        }
+        .sub-category .action-buttons .external-link {
+            background-color: #e67e22; /* Orange */
+            color: white;
+        }
+        .sub-category .action-buttons .external-link:hover {
+            background-color: #d35400;
+            transform: translateY(-1px);
+        }
+        .sub-category .action-buttons .quiz-button {
+            background-color: #3498db; /* Blue */
+            color: white;
+        }
+        .sub-category .action-buttons .quiz-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .back-button {
+            display: block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: #95a5a6; /* Grey */
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            width: fit-content; /* Adjust button width to content */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .back-button:hover {
+            background-color: #7f8c8d;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        /* Utility class to hide/show */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="main-quiz-list-section">
+            <h1>Welcome to My Interactive Quiz Hub!</h1>
+            <p>Explore various subjects and dive deep into specific topics. Each main category below offers detailed information, external resources, and dedicated quiz tests.</p>
+
+            <ul class="quiz-list" id="mainQuizList">
+                <li data-category="anatomy">
+                    <h2>Anatomy Quizzes</h2>
+                    <span class="arrow">&gt;</span>
+                </li>
+                <li data-category="physiology">
+                    <h2>Physiology Quizzes</h2>
+                    <span class="arrow">&gt;</span>
+                </li>
+                <li data-category="pharmacology">
+                    <h2>Pharmacology Quizzes</h2>
+                    <span class="arrow">&gt;</span>
+                </li>
+            </ul>
+        </div>
+
+        <div id="anatomy-detail-section" class="category-detail">
+            <h2>Anatomy Quizzes & Resources</h2>
+            <p>Welcome to the Anatomy hub! Here you can find resources and quizzes related to different areas of anatomical study.</p>
+
+            <div class="sub-category">
+                <h3>Embryology</h3>
+                <p>Learn about the fascinating development of the human body from conception to birth. This section includes foundational concepts and clinical correlations.</p>
+                <div class="action-buttons">
+                    <a href="https://github.com/YourUsername/my-content-repo/blob/main/anatomy/embryology.md" target="_blank" class="content-link">View Content</a>
+                    <a href="https://www.embryology.ch/" target="_blank" class="external-link">External Resource</a>
+                    <a href="https://yourusername.github.io/anatomy-quizzes/embryology-quiz.html" target="_blank" class="quiz-button">Take Embryology Quiz</a>
+                </div>
+            </div>
+
+            <div class="sub-category">
+                <h3>Gross Anatomy</h3>
+                <p>Explore the structures of the human body that can be seen with the naked eye. This covers systems like skeletal, muscular, nervous, and more.</p>
+                <div class="action-buttons">
+                    <a href="gross-anatomy-topics.html" class="content-link">Explore Gross Anatomy Topics</a>
+                    <a href="https://www.teachmeanatomy.info/" target="_blank" class="external-link">External Resource</a>
+                    <a href="https://yourusername.github.io/anatomy-quizzes/gross-anatomy-general-quiz.html" target="_blank" class="quiz-button">Take General Quiz</a>
+                </div>
+            </div>
+
+            <div class="sub-category">
+                <h3>Histology</h3>
+                <p>Delve into the microscopic structure of tissues and organs. Understand how cells are organized to form the building blocks of the body.</p>
+                <div class="action-buttons">
+                    <a href="https://github.com/YourUsername/my-content-repo/blob/main/anatomy/histology.md" target="_blank" class="content-link">View Content</a>
+                    <a href="https://www.histology.leeds.ac.uk/" target="_blank" class="external-link">External Resource</a>
+                    <a href="https://yourusername.github.io/anatomy-quizzes/histology-quiz.html" target="_blank" class="quiz-button">Take Histology Quiz</a>
+                </div>
+            </div>
+            <a href="#" class="back-button" onclick="showMainList(event)">Back to Main Categories</a>
+        </div>
+
+        <div id="physiology-detail-section" class="category-detail">
+            <h2>Physiology Quizzes & Resources</h2>
+            <p>Discover how the human body functions, from cellular mechanisms to organ systems.</p>
+
+            <div class="sub-category">
+                <h3>Cardiovascular Physiology</h3>
+                <p>Understand the heart, blood vessels, and circulation. Learn about blood pressure regulation and cardiac output.</p>
+                <div class="action-buttons">
+                    <a href="https://github.com/YourUsername/my-content-repo/blob/main/physiology/cardiovascular.md" target="_blank" class="content-link">View Content</a>
+                    <a href="https://www.khanacademy.org/science/high-school-biology/hs-human-body-systems/hs-the-circulatory-and-respiratory-systems/v/circulatory-system-review" target="_blank" class="external-link">External Resource</a>
+                    <a href="https://yourusername.github.io/physiology-quizzes/cardiovascular-quiz.html" target="_blank" class="quiz-button">Take Cardio Quiz</a>
+                </div>
+            </div>
+            <div class="sub-category">
+                <h3>Respiratory Physiology</h3>
+                <p>Explore the mechanics of breathing, gas exchange, and regulation of respiration.</p>
+                <div class="action-buttons">
+                    <a href="https://github.com/YourUsername/my-content-repo/blob/main/physiology/respiratory.md" target="_blank" class="content-link">View Content</a>
+                    <a href="https://www.physio-pedia.com/Respiratory_Physiology" target="_blank" class="external-link">External Resource</a>
+                    <a href="https://yourusername.github.io/physiology-quizzes/respiratory-quiz.html" target="_blank" class="quiz-button">Take Respiratory Quiz</a>
+                </div>
+            </div>
+
+            <a href="#" class="back-button" onclick="showMainList(event)">Back to Main Categories</a>
+        </div>
+
+        <div id="pharmacology-detail-section" class="category-detail">
+            <h2>Pharmacology Quizzes & Resources</h2>
+            <p>Explore the fascinating world of drugs, their effects, mechanisms, and therapeutic uses.</p>
+
+            <div class="sub-category">
+                <h3>General Principles</h3>
+                <p>Understand pharmacokinetics and pharmacodynamics – how drugs move through and affect the body.</p>
+                <div class="action-buttons">
+                    <a href="https://github.com/YourUsername/my-content-repo/blob/main/pharmacology/general-principles.md" target="_blank" class="content-link">View Content</a>
+                    <a href="https://www.rxlist.com/pharmacology/article.htm" target="_blank" class="external-link">External Resource</a>
+                    <a href="https://yourusername.github.io/pharmacology-quizzes/general-pharmacology-quiz.html" target="_blank" class="quiz-button">Take General Pharma Quiz</a>
+                </div>
+            </div>
+            <div class="sub-category">
+                <h3>Autonomic Pharmacology</h3>
+                <p>Focus on drugs affecting the autonomic nervous system, including adrenergic and cholinergic agents.</p>
+                <div class="action-buttons">
+                    <a href="https://github.com/YourUsername/my-content-repo/blob/main/pharmacology/autonomic.md" target="_blank" class="content-link">View Content</a>
+                    <a href="https://www.amboss.com/us/knowledge/pharmacology/autonomic-nervous-system/overview" target="_blank" class="external-link">External Resource</a>
+                    <a href="https://yourusername.github.io/pharmacology-quizzes/autonomic-pharmacology-quiz.html" target="_blank" class="quiz-button">Take Autonomic Pharma Quiz</a>
+                </div>
+            </div>
+
+            <a href="#" class="back-button" onclick="showMainList(event)">Back to Main Categories</a>
+        </div>
+
+
+        <footer>
+            <p>&copy; <script>document.write(new Date().getFullYear())</script> Your Name/Your Project. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const mainQuizListSection = document.getElementById('main-quiz-list-section');
+        const mainQuizList = document.getElementById('mainQuizList');
+        const categoryDetailSections = document.querySelectorAll('.category-detail');
+
+        // Function to show a specific category detail section
+        function showCategory(categoryId) {
+            // Hide all category detail sections first
+            categoryDetailSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            // Hide the main quiz list
+            mainQuizListSection.classList.add('hidden');
+
+            // Show the selected category detail section
+            const targetSection = document.getElementById(`${categoryId}-detail-section`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+
+        // Function to show the main quiz list
+        function showMainList(event) {
+            if (event) event.preventDefault(); // Prevent default link behavior if called from a button
+            mainQuizListSection.classList.remove('hidden');
+            categoryDetailSections.forEach(section => {
+                section.classList.remove('active');
+            });
+        }
+
+        // Add click event listeners to main quiz list items
+        mainQuizList.querySelectorAll('li').forEach(item => {
+            item.addEventListener('click', () => {
+                const category = item.dataset.category; // Get the data-category attribute
+                showCategory(category);
+            });
+        });
+
+        // Initialize: Ensure only the main list is shown on load
+        document.addEventListener('DOMContentLoaded', showMainList);
+
+    </script>
+</body>
+</html>
