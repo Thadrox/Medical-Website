@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Embryology Quiz</title>
-    <link rel="icon" href="https://img.icons8.com/ios-filled/50/quiz.png" type="image/png"> <style>
+    <link rel="icon" href="https://img.icons8.com/ios-filled/50/quiz.png" type="image/png">
+    <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -23,10 +24,13 @@
         h1 {
             color: #2e8b57;
         }
-        .question {
+        .question-section {
             margin-bottom: 20px;
+        }
+        .question {
             font-size: 1.2em;
             font-weight: bold;
+            margin-bottom: 15px;
         }
         .options button {
             display: block;
@@ -44,10 +48,31 @@
             background-color: #cceeff;
             border-color: #99ccff;
         }
-        #result {
-            margin-top: 25px;
+        #feedback {
+            margin-top: 15px;
             font-size: 1.1em;
             font-weight: bold;
+            min-height: 25px; /* To prevent layout shift */
+        }
+        #result {
+            margin-top: 25px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2e8b57;
+        }
+        .navigation-buttons button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #6a5acd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        .navigation-buttons button:hover {
+            background-color: #483d8b;
         }
         .back-button {
             display: inline-block;
@@ -67,30 +92,134 @@
 <body>
     <div class="quiz-container">
         <h1>Embryology Quiz</h1>
-        <div class="question">
-            <p>1. What is the process by which the three germ layers are formed?</p>
-            <div class="options">
-                <button onclick="checkAnswer('gastrulation')">A) Gastrulation</button>
-                <button onclick="checkAnswer('cleavage')">B) Cleavage</button>
-                <button onclick="checkAnswer('neurulation')">C) Neurulation</button>
-                <button onclick="checkAnswer('implantation')">D) Implantation</button>
-            </div>
+        <div class="question-section">
+            <p class="question" id="question-text"></p>
+            <div class="options" id="options-container">
+                </div>
+            <p id="feedback"></p>
+        </div>
+        <div class="navigation-buttons">
+            <button id="next-button" onclick="nextQuestion()">Next Question</button>
+            <button id="submit-button" onclick="showResults()" style="display:none;">Submit Quiz</button>
         </div>
         <p id="result"></p>
         <a href="https://yourusername.github.io/my-quiz-hub/index.html" class="back-button">Back to Quiz Hub</a>
     </div>
 
     <script>
-        function checkAnswer(selectedAnswer) {
-            const resultElement = document.getElementById('result');
-            if (selectedAnswer === 'gastrulation') {
-                resultElement.textContent = "Correct! Gastrulation is the process.";
-                resultElement.style.color = "green";
+        const questions = [
+            {
+                question: "1. What is the process by which the three germ layers are formed?",
+                options: ["Gastrulation", "Cleavage", "Neurulation", "Implantation"],
+                answer: "Gastrulation"
+            },
+            {
+                question: "2. Which germ layer gives rise to the nervous system and epidermis?",
+                options: ["Mesoderm", "Endoderm", "Ectoderm", "Neural Crest"],
+                answer: "Ectoderm"
+            },
+            {
+                question: "3. What is the hollow ball of cells formed after cleavage called?",
+                options: ["Morula", "Blastocyst", "Gastrula", "Zygote"],
+                answer: "Blastocyst"
+            },
+            {
+                question: "4. During which week of development does neurulation primarily occur?",
+                options: ["First week", "Second week", "Third week", "Fourth week"],
+                answer: "Third week"
+            },
+            {
+                question: "5. The process of implantation typically occurs how many days after fertilization?",
+                options: ["1-3 days", "4-6 days", "7-10 days", "11-14 days"],
+                answer: "7-10 days"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answeredCurrentQuestion = false;
+
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackElement = document.getElementById('feedback');
+        const resultElement = document.getElementById('result');
+        const nextButton = document.getElementById('next-button');
+        const submitButton = document.getElementById('submit-button');
+
+        function displayQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const q = questions[currentQuestionIndex];
+                questionTextElement.textContent = q.question;
+                optionsContainer.innerHTML = ''; // Clear previous options
+                feedbackElement.textContent = ''; // Clear previous feedback
+                answeredCurrentQuestion = false; // Reset for the new question
+
+                q.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.onclick = () => checkAnswer(option, q.answer);
+                    optionsContainer.appendChild(button);
+                });
+
+                // Show or hide navigation buttons
+                if (currentQuestionIndex === questions.length - 1) {
+                    nextButton.style.display = 'none';
+                    submitButton.style.display = 'block';
+                } else {
+                    nextButton.style.display = 'block';
+                    submitButton.style.display = 'none';
+                }
+                resultElement.textContent = ''; // Clear final result if navigating back/forward
             } else {
-                resultElement.textContent = "Incorrect. Try again!";
-                resultElement.style.color = "red";
+                showResults();
             }
         }
+
+        function checkAnswer(selectedAnswer, correctAnswer) {
+            if (answeredCurrentQuestion) return; // Prevent multiple answers for the same question
+
+            if (selectedAnswer === correctAnswer) {
+                feedbackElement.textContent = "Correct!";
+                feedbackElement.style.color = "green";
+                score++;
+            } else {
+                feedbackElement.textContent = `Incorrect. The correct answer was: ${correctAnswer}`;
+                feedbackElement.style.color = "red";
+            }
+            answeredCurrentQuestion = true;
+            disableOptions(); // Disable buttons after an answer is selected
+        }
+
+        function disableOptions() {
+            const buttons = optionsContainer.getElementsByTagName('button');
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+            }
+        }
+
+        function nextQuestion() {
+            if (!answeredCurrentQuestion) {
+                feedbackElement.textContent = "Please select an answer before moving on.";
+                feedbackElement.style.color = "orange";
+                return;
+            }
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        function showResults() {
+            questionTextElement.style.display = 'none';
+            optionsContainer.style.display = 'none';
+            feedbackElement.style.display = 'none';
+            nextButton.style.display = 'none';
+            submitButton.style.display = 'none';
+
+            resultElement.textContent = `Quiz completed! You scored ${score} out of ${questions.length}.`;
+            resultElement.style.color = '#2e8b57';
+        }
+
+        // Initialize the quiz
+        displayQuestion();
     </script>
 </body>
 </html>
